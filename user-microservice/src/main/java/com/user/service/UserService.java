@@ -25,20 +25,27 @@ public class UserService {
 	private UserRepository userRepository;
 
 	@Autowired
-	private HotelService hotelService;
-
-	@Autowired
 	private RestTemplate restTemplate;
 
-	private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+	@Autowired
+	private HotelService hotelService;
+
+	private Logger logger = LoggerFactory.getLogger(UserService.class);
 
 	public User saveUser(User user) {
-		String randomuserId = UUID.randomUUID().toString();
-		user.setUserId(randomuserId);
+		// generate unique userid
+		String randomUserId = UUID.randomUUID().toString();
+		user.setUserId(randomUserId);
 		return userRepository.save(user);
 	}
 
-	public User getUserById(String userId) {
+	public List<User> getAllUser() {
+		// implement RATING SERVICE CALL: USING REST TEMPLATE
+		return userRepository.findAll();
+	}
+
+	// get single user
+	public User getUser(String userId) {
 		// get user from database with the help of user repository
 		User user = userRepository.findById(userId).orElseThrow(
 				() -> new ResourceNotFoundException("User with given id is not found on server !! : " + userId));
@@ -51,18 +58,15 @@ public class UserService {
 		List<Rating> ratings = Arrays.stream(ratingsOfUser).collect(Collectors.toList());
 		List<Rating> ratingList = ratings.stream().map(rating -> {
 			// api call to hotel service to get the hotel
-
 			// http://localhost:8082/hotels/1cbaf36d-0b28-4173-b5ea-f1cb0bc0a791
 			// ResponseEntity<Hotel> forEntity =
 			// restTemplate.getForEntity("http://HOTEL-SERVICE/hotels/"+rating.getHotelId(),
 			// Hotel.class);
-
 			Hotel hotel = hotelService.getHotel(rating.getHotelId());
 			// logger.info("response status code: {} ",forEntity.getStatusCode());
 			// set the hotel to rating
 			rating.setHotel(hotel);
 			// return the rating
-
 			return rating;
 		}).collect(Collectors.toList());
 
@@ -70,14 +74,4 @@ public class UserService {
 
 		return user;
 	}
-
-	public List<User> getAllUsers() {
-		return userRepository.findAll();
-	}
-
-	public boolean deleteUser(String userId) {
-		userRepository.deleteById(userId);
-		return true;
-	}
-
 }

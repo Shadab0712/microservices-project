@@ -9,17 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 @Entity
 @Table(name = "micro_users")
 public class User {
@@ -31,15 +20,27 @@ public class User {
 	@Column(name = "NAME", length = 20)
 	private String name;
 
-	@Column(name = "EMAIL")
+	@Column(name = "password")
+	private String password;
 
+	@Column(name = "EMAIL")
 	private String email;
+
 	@Column(name = "ABOUT")
 	private String about;
 	// other user properties that you want
 
 	@Transient
 	private List<Rating> ratings = new ArrayList<>();
+
+	
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
 	public String getUserId() {
 		return userId;
@@ -80,7 +81,5 @@ public class User {
 	public void setRatings(List<Rating> ratings) {
 		this.ratings = ratings;
 	}
-	
-	
 
 }
