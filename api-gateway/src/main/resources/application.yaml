@@ -4,7 +4,7 @@ server:
 
 spring:
   application:
-    name: Aapi-gateway
+    name: api-gateway
 
 
   cloud:
